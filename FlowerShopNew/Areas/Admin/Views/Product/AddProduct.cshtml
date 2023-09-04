@@ -1,0 +1,228 @@
+﻿@model ProductAddVM
+@{
+	ViewData["Title"] = "add product";
+	Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+	List<Category> category = ViewBag.Categories;
+}
+
+<div class="toolbar mb-5 mb-lg-7" id="kt_toolbar">
+	<div class="page-title d-flex flex-column me-3">
+		<h1 class="d-flex text-dark fw-bold my-1 fs-3">Product Form</h1>
+		<ul class="breadcrumb breadcrumb-dot fw-semibold text-gray-600 fs-7 my-1">
+			<li class="breadcrumb-item text-gray-600">
+				<a href="../../demo14/dist/index.html" class="text-gray-600 text-hover-primary">Home</a>
+			</li>
+			<li class="breadcrumb-item text-gray-600">eCommerce</li>
+			<li class="breadcrumb-item text-gray-600">Catalog</li>
+			<li class="breadcrumb-item text-gray-500">Add Product</li>
+		</ul>
+	</div>
+</div>
+<div class="content flex-column-fluid" id="kt_content">
+	<!--begin::Form-->
+	<form asp-area="Admin" asp-controller="Product" asp-action="AddProduct" class="form d-flex flex-column flex-lg-row" enctype="multipart/form-data">
+		<!--begin::Aside column-->
+		<div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
+			<!--begin::Thumbnail settings-->
+			<div class="card card-flush py-4">
+				<!--begin::Card header-->
+				<div class="card-header">
+					<!--begin::Card title-->
+					<div class="card-title">
+						<h2>Thumbnail</h2>
+					</div>
+					<!--end::Card title-->
+				</div>
+				<!--end::Card header-->
+				<!--begin::Card body-->
+				<div class="card-body text-center pt-0">
+					<!--begin::Image input-->
+					<!--begin::Image input placeholder-->
+					<style>
+						.image-input-placeholder {
+							background-image: url('/admin/assets/media/svg/files/blank-image.svg');
+						}
+
+						[data-theme="dark"] .image-input-placeholder {
+							background-image: url('/admin/assets/media/svg/files/blank-image-dark.svg');
+						}</style>
+					<!--end::Image input placeholder-->
+					<div class="image-input image-input-empty image-input-outline image-input-placeholder mb-3" data-kt-image-input="true" style="&lt;br /&gt; &lt;b&gt;Warning&lt;/b&gt;: Undefined variable $imageBg in &lt;b&gt;C:\wamp64\www\keenthemes\core\html\dist\view\pages\apps\ecommerce\catalog\edit-product\_thumbnail.php&lt;/b&gt; on line &lt;b&gt;30&lt;/b&gt;&lt;br /&gt;">
+						<!--begin::Preview existing avatar-->
+						<div class="image-input-wrapper w-150px h-150px">
+							@if (@Model != null && !string.IsNullOrEmpty(@Model.ImageUrl))
+							{
+								<img src="/product-photos/@Model.ImageUrl" />
+							}
+							else
+							{
+								<p>No image available.</p>
+							}
+						</div>
+						<!--end::Preview existing avatar-->
+						<!--begin::Label-->
+						<label
+							asp-for="File" class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar" for="uploadFile">
+							<i class="bi bi-pencil-fill fs-7"></i>
+							<!--begin::Inputs-->
+							<input asp-for="File" type="file" accept=".png, .jpg, .jpeg" id="uploadFile"/>
+						
+							<!--end::Inputs-->
+						</label>
+						<!--end::Label-->
+						<!--begin::Cancel-->
+						<span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">
+							<i class="bi bi-x fs-2"></i>
+						</span>
+						<!--end::Cancel-->
+						<!--begin::Remove-->
+						<span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove avatar">
+							<i class="bi bi-x fs-2"></i>
+						</span>
+						<!--end::Remove-->
+					</div>
+					<!--end::Image input-->
+					<!--begin::Description-->
+					<div class="text-muted fs-7">Set the product thumbnail image. Only *.png, *.jpg and *.jpeg image files are accepted</div>
+					<!--end::Description-->
+				</div>
+				<!--end::Card body-->
+			</div>
+			<!--end::Thumbnail settings-->
+			<!--begin::Category & tags-->
+			<div class="card card-flush py-4">
+				<!--begin::Card header-->
+				<div class="card-header">
+					<!--begin::Card title-->
+					<div class="card-title">
+						<h2>Product Details</h2>
+					</div>
+					<!--end::Card title-->
+				</div>
+				<!--end::Card header-->
+				<!--begin::Card body-->
+				<div class="card-body pt-0">
+					<!--begin::Input group-->
+					<!--begin::Label-->
+					<label class="form-label">Categories</label>
+					<!--end::Label-->
+					<!--begin::Select2-->
+					<select class="form-select mb-2" data-control="select2" data-placeholder="kategori seçiniz..." data-allow-clear="true" asp-for="CategoryId">
+						@if (category != null)
+						{
+							@foreach (Category x in category)
+							{
+								<option value="@x.Id">@x.Name</option>
+							}
+						}
+						else
+						{
+							<p class="text-danger">Error: Category data is not available.</p>
+						}
+
+
+					</select>
+					<!--end::Select2-->
+					<!--begin::Description-->
+					<div class="text-muted fs-7 mb-7">Add product to a category.</div>
+					<!--end::Description-->
+					<!--end::Input group-->
+					<!--begin::Button-->
+					<a href="../../demo14/dist/apps/ecommerce/catalog/add-category.html" class="btn btn-light-primary btn-sm mb-10">
+						<!--begin::Svg Icon | path: icons/duotune/arrows/arr087.svg-->
+						<span class="svg-icon svg-icon-2">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<rect opacity="0.5" x="11" y="18" width="12" height="2" rx="1" transform="rotate(-90 11 18)" fill="currentColor" />
+								<rect x="6" y="11" width="12" height="2" rx="1" fill="currentColor" />
+							</svg>
+						</span>
+						<!--end::Svg Icon-->Create new category
+					</a>
+					<!--end::Button-->
+					<!--begin::Input group-->
+					<!--begin::Label-->
+					<label class="form-label d-block">Tags</label>
+					<!--end::Label-->
+					<!--begin::Input-->
+					<input id="kt_ecommerce_add_product_tags" name="kt_ecommerce_add_product_tags" class="form-control mb-2" value="" />
+					<!--end::Input-->
+					<!--begin::Description-->
+					<div class="text-muted fs-7">Add tags to a product.</div>
+					<!--end::Description-->
+					<!--end::Input group-->
+				</div>
+				<!--end::Card body-->
+			</div>
+			<!--end::Category & tags-->
+		</div>
+		<!--end::Aside column-->
+		<!--begin::Main column-->
+		<div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+
+			<!--begin::Pricing-->
+			<div class="card card-flush py-4">
+				<!--begin::Card header-->
+				<div class="card-header">
+					<div class="card-title">
+						<h2>Product Details</h2>
+					</div>
+				</div>
+				<!--end::Card header-->
+				<!--begin::Card body-->
+				<div class="card-body pt-0">
+
+					<div class="mb-10 fv-row">
+
+						<label class="required form-label">Product Code</label>
+						<input type="text" class="form-control mb-2" placeholder="Product price" asp-for="ProductCode" />
+
+					</div>
+
+					<div class="mb-10 fv-row">
+
+						<label class="required form-label">Product Name</label>
+						<input type="text" class="form-control mb-2" placeholder="Product name" asp-for="Name" />
+
+					</div>
+					<div class="mb-10 fv-row">
+
+						<label class="required form-label">Description</label>
+						<input type="text"  class="form-control mb-2" placeholder="Product description" asp-for="Description" />
+
+					</div>
+					<!--begin::Input group-->
+					<div class="mb-10 fv-row">
+
+						<label class="required form-label">Product Price</label>
+						<input type="text" class="form-control mb-2" placeholder="Product price" asp-for="Price" />
+						<div class="text-muted fs-7">Set the product price.</div>
+					</div>
+					<!--end::Input group-->
+					<!--end::Card header-->
+				</div>
+				<!--end::Pricing-->
+
+				<div class="d-flex justify-content-end">
+					<!--begin::Button-->
+					<a href="../../demo14/dist/apps/ecommerce/catalog/products.html" id="kt_ecommerce_add_product_cancel" class="btn btn-light me-5">Cancel</a>
+					<!--end::Button-->
+					<!--begin::Button-->
+					<button type="submit" id="kt_ecommerce_add_product_submit" class="btn btn-primary">
+						<span class="indicator-label">Save Changes</span>
+						<span class="indicator-progress">
+							Please wait...
+							<span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+						</span>
+					</button>
+					<!--end::Button-->
+				</div>
+
+			</div>
+			<!--end::Main column-->
+	</form>
+	<!--end::Form-->
+</div>
+<!--end::Post-->
+@section Scripts{
+	<script src="/admin/assets/js/custom/apps/ecommerce/catalog/save-product.js"></script>
+}
