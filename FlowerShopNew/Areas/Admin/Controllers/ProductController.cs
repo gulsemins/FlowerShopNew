@@ -35,7 +35,7 @@ namespace FlowerShopNew.Areas.Admin.Controllers
 			var productAddVM = new ProductAddVM();
 			return View(productAddVM);
 
-		
+
 		}
 		[HttpPost]
 		public async Task<IActionResult> AddProduct(ProductAddVM productAddVM)
@@ -75,7 +75,7 @@ namespace FlowerShopNew.Areas.Admin.Controllers
 
 				return RedirectToAction(nameof(Index));
 			}
-		
+
 			ViewBag.Categories = appDbContext.Categories.ToList();
 
 			return View();
@@ -111,34 +111,70 @@ namespace FlowerShopNew.Areas.Admin.Controllers
 		[HttpGet]
 		public IActionResult UpdateProduct(int id)
 		{
+			List<Category> categories = appDbContext.Categories.ToList();
+			ViewBag.Categories = categories;
 			Product product = appDbContext.Products.Find(id);
 
-			return View(product);
+			ProductUpdateVM vm = new ProductUpdateVM();
+			vm.Id = product.Id;
+			vm.ProductCode = product.ProductCode;
+			vm.Name = product.Name;
+			vm.Price = product.Price;
+			vm.CategoryId = product.CategoryId;
+			vm.Description = product.Description;
+			vm.ImageUrl = product.ImageUrl;
+
+			return View(vm);
 		}
 
 
 		[HttpPost]
-		public IActionResult UpdateProduct(Product product)
+		public async Task<IActionResult> UpdateProduct(ProductUpdateVM productUpdateVM)
 		{
-			var urun = appDbContext.Products.Find(product.Id);
-			urun.Name = product.Name;
-			urun.Price = product.Price;
-			urun.Description = product.Description;
-			urun.ProductCode = product.ProductCode;
+			if (!ModelState.IsValid)
+			{
+				return NotFound();
+			}
 
-			appDbContext.Products.Update(urun);
-			appDbContext.SaveChanges();
+			var urun = appDbContext.Products.Find(productUpdateVM.Id);
+			if (urun != null)
+			{
+				urun.ProductCode = productUpdateVM.ProductCode;
+				urun.Name = productUpdateVM.Name;
+				urun.Description = productUpdateVM.Description;
+				urun.Price = productUpdateVM.Price;
 
-			return RedirectToAction("Index");
-		}
+				if (productUpdateVM.File != null)
+				{
+					var filePath = Path.Combine(hostEnvironment.WebRootPath, "product-photos"); // birleştirdi
+					if (!Directory.Exists(filePath))
+					{
+						Directory.CreateDirectory(filePath);
+					}
 
-		
+					string fileExt = Path.GetExtension(productUpdateVM.File.FileName);
+					string uniqueFilename = Guid.NewGuid().ToString() + fileExt;
 
 
+					var tamDosyaAdi = Path.Combine(filePath, uniqueFilename);
 
+					using (var dosyaAkisi = new FileStream(tamDosyaAdi, FileMode.Create))
+					{
+						await productUpdateVM.File.CopyToAsync(dosyaAkisi);
+					}
 
+					urun.ImageUrl = uniqueFilename;
+				}
 
+				urun.CategoryId = productUpdateVM.CategoryId;
 
+				appDbContext.Update(urun);
+				appDbContext.SaveChanges();
+
+			}
+            ViewBag.Categories = appDbContext.Categories.ToList();
+            return RedirectToAction(nameof(Index));
+        }
 	}
 
 }

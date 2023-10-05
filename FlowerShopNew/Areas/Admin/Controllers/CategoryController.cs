@@ -76,16 +76,44 @@ namespace FlowerShopNew.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult UpdateCategory(Category category)
         {
-           
-            var ctg = appDbContext.Categories.Find(category.Id);
-            ctg.Name = category.Name;
-            ctg.OrderNr = category.OrderNr;
-            ctg.IsActive = category.IsActive;
 
-			appDbContext.Categories.Update(ctg);
-			appDbContext.SaveChanges();
+			try
+			{
+				var ctg = appDbContext.Categories.Find(category.Id);
+				if (ctg != null)
+				{
+					ctg.Name = category.Name;
+					ctg.OrderNr = category.OrderNr;
+					ctg.IsActive = category.IsActive;
+                    
 
-			return RedirectToAction("Index");
+					appDbContext.Categories.Update(ctg);
+					appDbContext.SaveChanges();
+
+					return RedirectToAction("Index");
+				}
+				else
+				{
+					// Handle the case where the category with the specified ID was not found.
+					// You can return a specific view or message here.
+					return NotFound();
+				}
+			}
+			catch (Exception ex)
+			{
+				// Log the exception or handle it appropriately
+				return StatusCode(500, ex.Message);
+			}
+
+			//         var ctg = appDbContext.Categories.Find(category.Id);
+			//         ctg.Name = category.Name;
+			//         ctg.OrderNr = category.OrderNr;
+			//         ctg.IsActive = category.IsActive;
+
+			//appDbContext.Categories.Update(ctg);
+			//appDbContext.SaveChanges();
+
+			//return RedirectToAction("Index");
 
 		}
 

@@ -1,8 +1,9 @@
-﻿@{
+﻿@model ProductUpdateVM
+@{
 	ViewData["Title"] = "update product";
 	Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+	List<Category> category = ViewBag.Categories;
 }
-
 <div class="toolbar mb-5 mb-lg-7" id="kt_toolbar">
 	<div class="page-title d-flex flex-column me-3">
 		<h1 class="d-flex text-dark fw-bold my-1 fs-3">Product Form</h1>
@@ -12,13 +13,13 @@
 			</li>
 			<li class="breadcrumb-item text-gray-600">eCommerce</li>
 			<li class="breadcrumb-item text-gray-600">Catalog</li>
-			<li class="breadcrumb-item text-gray-500">Add Product</li>
+			<li class="breadcrumb-item text-gray-500">Update Product</li>
 		</ul>
 	</div>
 </div>
 <div class="content flex-column-fluid" id="kt_content">
 	<!--begin::Form-->
-	<form id="kt_ecommerce_add_product_form" class="form d-flex flex-column flex-lg-row" data-kt-redirect="../../demo14/dist/apps/ecommerce/catalog/products.html">
+	<form asp-area="Admin" asp-controller="Product" asp-action="UpdateProduct" class="form d-flex flex-column flex-lg-row" enctype="multipart/form-data">
 		<!--begin::Aside column-->
 		<div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
 			<!--begin::Thumbnail settings-->
@@ -47,14 +48,23 @@
 					<!--end::Image input placeholder-->
 					<div class="image-input image-input-empty image-input-outline image-input-placeholder mb-3" data-kt-image-input="true" style="&lt;br /&gt; &lt;b&gt;Warning&lt;/b&gt;: Undefined variable $imageBg in &lt;b&gt;C:\wamp64\www\keenthemes\core\html\dist\view\pages\apps\ecommerce\catalog\edit-product\_thumbnail.php&lt;/b&gt; on line &lt;b&gt;30&lt;/b&gt;&lt;br /&gt;">
 						<!--begin::Preview existing avatar-->
-						<div class="image-input-wrapper w-150px h-150px"></div>
+						<div class="image-input-wrapper w-150px h-150px">
+							@if (@Model != null && !string.IsNullOrEmpty(@Model.ImageUrl))
+							{
+								<img src="/product-photos/@Model.ImageUrl" width="150px" height="150px"/>
+							}
+							else
+							{
+								<p>No image available.</p>
+							}
+						</div>
 						<!--end::Preview existing avatar-->
 						<!--begin::Label-->
-						<label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
+						<label asp-for="File" class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar" for="uploadFile">
 							<i class="bi bi-pencil-fill fs-7"></i>
 							<!--begin::Inputs-->
-							<input type="file" name="avatar" accept=".png, .jpg, .jpeg" />
-							<input type="hidden" name="avatar_remove" />
+							<input asp-for="File" type="file" accept=".png, .jpg, .jpeg" id="uploadFile" />
+
 							<!--end::Inputs-->
 						</label>
 						<!--end::Label-->
@@ -95,18 +105,20 @@
 					<label class="form-label">Categories</label>
 					<!--end::Label-->
 					<!--begin::Select2-->
-					<select class="form-select mb-2" data-control="select2" data-placeholder="Select an option" data-allow-clear="true" multiple="multiple">
-						<option></option>
-						<option value="Computers">Computers</option>
-						<option value="Watches">Watches</option>
-						<option value="Headphones">Headphones</option>
-						<option value="Footwear">Footwear</option>
-						<option value="Cameras">Cameras</option>
-						<option value="Shirts">Shirts</option>
-						<option value="Household">Household</option>
-						<option value="Handbags">Handbags</option>
-						<option value="Wines">Wines</option>
-						<option value="Sandals">Sandals</option>
+					<select class="form-select mb-2" data-control="select2" data-placeholder="kategori seçiniz..." data-allow-clear="true" asp-for="CategoryId">
+						@if (category != null)
+						{
+							@foreach (Category x in category)
+							{
+								<option value="@x.Id">@x.Name</option>
+							}
+						}
+						else
+						{
+							<p class="text-danger">Error: Category data is not available.</p>
+						}
+
+
 					</select>
 					<!--end::Select2-->
 					<!--begin::Description-->
@@ -122,20 +134,9 @@
 								<rect x="6" y="11" width="12" height="2" rx="1" fill="currentColor" />
 							</svg>
 						</span>
-						<!--end::Svg Icon-->Create new category
+						<!--end::Svg Icon-->Yeni Kategori Ekle
 					</a>
 					<!--end::Button-->
-					<!--begin::Input group-->
-					<!--begin::Label-->
-					<label class="form-label d-block">Tags</label>
-					<!--end::Label-->
-					<!--begin::Input-->
-					<input id="kt_ecommerce_add_product_tags" name="kt_ecommerce_add_product_tags" class="form-control mb-2" value="" />
-					<!--end::Input-->
-					<!--begin::Description-->
-					<div class="text-muted fs-7">Add tags to a product.</div>
-					<!--end::Description-->
-					<!--end::Input group-->
 				</div>
 				<!--end::Card body-->
 			</div>
@@ -150,182 +151,61 @@
 				<!--begin::Card header-->
 				<div class="card-header">
 					<div class="card-title">
-						<h2>Pricing</h2>
+						<h2>Product Details</h2>
 					</div>
 				</div>
 				<!--end::Card header-->
 				<!--begin::Card body-->
 				<div class="card-body pt-0">
+
+					<div class="mb-10 fv-row">
+
+						<label class="required form-label">Product Code</label>
+						<input type="text" class="form-control mb-2" placeholder="Product price" asp-for="ProductCode" />
+
+					</div>
+
+					<div class="mb-10 fv-row">
+
+						<label class="required form-label">Product Name</label>
+						<input type="text" class="form-control mb-2" placeholder="Product name" asp-for="Name" />
+
+					</div>
+					<div class="mb-10 fv-row">
+
+						<label class="required form-label">Description</label>
+						<input type="text" class="form-control mb-2" placeholder="Product description" asp-for="Description" />
+
+					</div>
 					<!--begin::Input group-->
 					<div class="mb-10 fv-row">
-						<!--begin::Label-->
-						<label class="required form-label">Base Price</label>
-						<!--end::Label-->
-						<!--begin::Input-->
-						<input type="text" name="price" class="form-control mb-2" placeholder="Product price" value="" />
-						<!--end::Input-->
-						<!--begin::Description-->
+
+						<label class="required form-label">Product Price</label>
+						<input type="text" class="form-control mb-2" placeholder="Product price" asp-for="Price" />
 						<div class="text-muted fs-7">Set the product price.</div>
-						<!--end::Description-->
 					</div>
 					<!--end::Input group-->
-					<!--begin::Input group-->
-					<div class="fv-row mb-10">
-						<!--begin::Label-->
-						<label class="fs-6 fw-semibold mb-2">
-							Discount Type
-							<i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Select a discount type that will be applied to this product"></i>
-						</label>
-						<!--End::Label-->
-						<!--begin::Row-->
-						<div class="row row-cols-1 row-cols-md-3 row-cols-lg-1 row-cols-xl-3 g-9" data-kt-buttons="true" data-kt-buttons-target="[data-kt-button='true']">
-							<!--begin::Col-->
-							<div class="col">
-								<!--begin::Option-->
-								<label class="btn btn-outline btn-outline-dashed btn-active-light-primary active d-flex text-start p-6" data-kt-button="true">
-									<!--begin::Radio-->
-									<span class="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
-										<input class="form-check-input" type="radio" name="discount_option" value="1" checked="checked" />
-									</span>
-									<!--end::Radio-->
-									<!--begin::Info-->
-									<span class="ms-5">
-										<span class="fs-4 fw-bold text-gray-800 d-block">No Discount</span>
-									</span>
-									<!--end::Info-->
-								</label>
-								<!--end::Option-->
-							</div>
-							<!--end::Col-->
-							<!--begin::Col-->
-							<div class="col">
-								<!--begin::Option-->
-								<label class="btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6" data-kt-button="true">
-									<!--begin::Radio-->
-									<span class="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
-										<input class="form-check-input" type="radio" name="discount_option" value="2" />
-									</span>
-									<!--end::Radio-->
-									<!--begin::Info-->
-									<span class="ms-5">
-										<span class="fs-4 fw-bold text-gray-800 d-block">Percentage %</span>
-									</span>
-									<!--end::Info-->
-								</label>
-								<!--end::Option-->
-							</div>
-							<!--end::Col-->
-							<!--begin::Col-->
-							<div class="col">
-								<!--begin::Option-->
-								<label class="btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6" data-kt-button="true">
-									<!--begin::Radio-->
-									<span class="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
-										<input class="form-check-input" type="radio" name="discount_option" value="3" />
-									</span>
-									<!--end::Radio-->
-									<!--begin::Info-->
-									<span class="ms-5">
-										<span class="fs-4 fw-bold text-gray-800 d-block">Fixed Price</span>
-									</span>
-									<!--end::Info-->
-								</label>
-								<!--end::Option-->
-							</div>
-							<!--end::Col-->
-						</div>
-						<!--end::Row-->
-					</div>
-					<!--end::Input group-->
-					<!--begin::Input group-->
-					<div class="d-none mb-10 fv-row" id="kt_ecommerce_add_product_discount_percentage">
-						<!--begin::Label-->
-						<label class="form-label">Set Discount Percentage</label>
-						<!--end::Label-->
-						<!--begin::Slider-->
-						<div class="d-flex flex-column text-center mb-5">
-							<div class="d-flex align-items-start justify-content-center mb-7">
-								<span class="fw-bold fs-3x" id="kt_ecommerce_add_product_discount_label">0</span>
-								<span class="fw-bold fs-4 mt-1 ms-2">%</span>
-							</div>
-							<div id="kt_ecommerce_add_product_discount_slider" class="noUi-sm"></div>
-						</div>
-						<!--end::Slider-->
-						<!--begin::Description-->
-						<div class="text-muted fs-7">Set a percentage discount to be applied on this product.</div>
-						<!--end::Description-->
-					</div>
-					<!--end::Input group-->
-					<!--begin::Input group-->
-					<div class="d-none mb-10 fv-row" id="kt_ecommerce_add_product_discount_fixed">
-						<!--begin::Label-->
-						<label class="form-label">Fixed Discounted Price</label>
-						<!--end::Label-->
-						<!--begin::Input-->
-						<input type="text" name="dicsounted_price" class="form-control mb-2" placeholder="Discounted price" />
-						<!--end::Input-->
-						<!--begin::Description-->
-						<div class="text-muted fs-7">Set the discounted product price. The product will be reduced at the determined fixed price</div>
-						<!--end::Description-->
-					</div>
-					<!--end::Input group-->
-					<!--begin::Tax-->
-					<div class="d-flex flex-wrap gap-5">
-						<!--begin::Input group-->
-						<div class="fv-row w-100 flex-md-root">
-							<!--begin::Label-->
-							<label class="required form-label">Tax Class</label>
-							<!--end::Label-->
-							<!--begin::Select2-->
-							<select class="form-select mb-2" name="tax" data-control="select2" data-hide-search="true" data-placeholder="Select an option">
-								<option></option>
-								<option value="0">Tax Free</option>
-								<option value="1">Taxable Goods</option>
-								<option value="2">Downloadable Product</option>
-							</select>
-							<!--end::Select2-->
-							<!--begin::Description-->
-							<div class="text-muted fs-7">Set the product tax class.</div>
-							<!--end::Description-->
-						</div>
-						<!--end::Input group-->
-						<!--begin::Input group-->
-						<div class="fv-row w-100 flex-md-root">
-							<!--begin::Label-->
-							<label class="form-label">VAT Amount (%)</label>
-							<!--end::Label-->
-							<!--begin::Input-->
-							<input type="text" class="form-control mb-2" value="" />
-							<!--end::Input-->
-							<!--begin::Description-->
-							<div class="text-muted fs-7">Set the product VAT about.</div>
-							<!--end::Description-->
-						</div>
-						<!--end::Input group-->
-					</div>
-					<!--end:Tax-->
+					<!--end::Card header-->
 				</div>
-				<!--end::Card header-->
-			</div>
-			<!--end::Pricing-->
+				<!--end::Pricing-->
 
-			<div class="d-flex justify-content-end">
-				<!--begin::Button-->
-				<a href="../../demo14/dist/apps/ecommerce/catalog/products.html" id="kt_ecommerce_add_product_cancel" class="btn btn-light me-5">Cancel</a>
-				<!--end::Button-->
-				<!--begin::Button-->
-				<button type="submit" id="kt_ecommerce_add_product_submit" class="btn btn-primary">
-					<span class="indicator-label">Save Changes</span>
-					<span class="indicator-progress">
-						Please wait...
-						<span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-					</span>
-				</button>
-				<!--end::Button-->
-			</div>
+				<div class="d-flex justify-content-end">
+					<!--begin::Button-->
+					<a href="../../demo14/dist/apps/ecommerce/catalog/products.html" id="kt_ecommerce_add_product_cancel" class="btn btn-light me-5">Cancel</a>
+					<!--end::Button-->
+					<!--begin::Button-->
+					<button type="submit" id="kt_ecommerce_add_product_submit" class="btn btn-primary">
+						<span class="indicator-label">Save Changes</span>
+						<span class="indicator-progress">
+							Please wait...
+							<span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+						</span>
+					</button>
+					<!--end::Button-->
+				</div>
 
-		</div>
-		<!--end::Main column-->
+			</div>
+			<!--end::Main column-->
 	</form>
 	<!--end::Form-->
 </div>

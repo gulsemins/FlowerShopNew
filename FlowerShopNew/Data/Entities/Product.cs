@@ -14,11 +14,9 @@ namespace FlowerShopNew.Data.Entities
         public int CategoryId { get; set; } 
         public Category Category { get; set; }
 
-        public List<Tag> Tags { get; set; }
-
-
         [NotMapped] //veri tabanına yansımayacak
 		public IFormFile File { get; set; }
+
 
 
 
